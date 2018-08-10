@@ -1,5 +1,13 @@
+module "alb_5xx_label" {
+  source     = "git::https://github.com/cloudposse/terraform-terraform-label.git?ref=tags/0.1.3"
+  name       = "${var.name}"
+  namespace  = "${var.namespace}"
+  stage      = "${var.stage}"
+  attributes = "${compact(concat(var.attributes, list("alb", "5xx")))}"
+}
+
 resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
-  alarm_name          = "alb_too_many_5xx"
+  alarm_name          = "${module.alb_5xx_label.id}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "HTTPCode_ELB_5XX"
@@ -18,8 +26,16 @@ resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
   ok_actions     = ["${var.alarm_actions}"]
 }
 
+module "backend_5xx_label" {
+  source     = "git::https://github.com/cloudposse/terraform-terraform-label.git?ref=tags/0.1.3"
+  name       = "${var.name}"
+  namespace  = "${var.namespace}"
+  stage      = "${var.stage}"
+  attributes = "${compact(concat(var.attributes, list("backend", "5xx")))}"
+}
+
 resource "aws_cloudwatch_metric_alarm" "backend_5xx" {
-  alarm_name          = "backend_5xx_exceeds_threshold"
+  alarm_name          = "${module.backend_5xx_label.id}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "HTTPCode_Target_5XX_Count"
@@ -38,8 +54,16 @@ resource "aws_cloudwatch_metric_alarm" "backend_5xx" {
   ok_actions     = ["${var.alarm_actions}"]
 }
 
-resource "aws_cloudwatch_metric_alarm" "target_connection_error_count" {
-  alarm_name          = "target_connection_error_count_exceeds_threshold"
+module "target_connection_error_label" {
+  source     = "git::https://github.com/cloudposse/terraform-terraform-label.git?ref=tags/0.1.3"
+  name       = "${var.name}"
+  namespace  = "${var.namespace}"
+  stage      = "${var.stage}"
+  attributes = "${compact(concat(var.attributes, list("target", "connection", "error")))}"
+}
+
+resource "aws_cloudwatch_metric_alarm" "target_connection_error" {
+  alarm_name          = "${module.target_connection_error_label.id}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "TargetConnectionErrorCount"
@@ -58,9 +82,16 @@ resource "aws_cloudwatch_metric_alarm" "target_connection_error_count" {
   ok_actions     = ["${var.alarm_actions}"]
 }
 
+module "latency_label" {
+  source     = "git::https://github.com/cloudposse/terraform-terraform-label.git?ref=tags/0.1.3"
+  name       = "${var.name}"
+  namespace  = "${var.namespace}"
+  stage      = "${var.stage}"
+  attributes = "${compact(concat(var.attributes, list("high", "latency")))}"
+}
 
 resource "aws_cloudwatch_metric_alarm" "latency" {
-  alarm_name          = "high_average_latency"
+  alarm_name          = "${module.latency_label.id}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "TargetResponseTime"
@@ -79,8 +110,16 @@ resource "aws_cloudwatch_metric_alarm" "latency" {
   ok_actions     = ["${var.alarm_actions}"]
 }
 
+module "unhealthy_hosts_label" {
+  source     = "git::https://github.com/cloudposse/terraform-terraform-label.git?ref=tags/0.1.3"
+  name       = "${var.name}"
+  namespace  = "${var.namespace}"
+  stage      = "${var.stage}"
+  attributes = "${compact(concat(var.attributes, list("unhealthy", "hosts")))}"
+}
+
 resource "aws_cloudwatch_metric_alarm" "unhealthy_hosts" {
-  alarm_name          = "unhealthy_host_count"
+  alarm_name          = "${module.unhealthy_hosts_label.id}"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "5"
   metric_name         = "UnHealthyHostCount"
