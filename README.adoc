@@ -1,0 +1,12 @@
+= aws-alb-cloudwatch-alarms
+
+.Example
+[source,terraform]
+----
+module "alb_alarms" {
+  source = "git::https://github.com/SevereOverfl0w/terraform-aws-alb-cloudwatch-sns-alarms.git?ref=master"
+  alb_arn_suffix = "${aws_alb.arn_suffix}"
+  human_identifier = "PiedPiper API ALB"
+  alarm_actions = "${var.alarm_actions}"
+}
+----
